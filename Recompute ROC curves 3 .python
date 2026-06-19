@@ -1,0 +1,45 @@
+# Recompute combined ROC curves using both uploaded Vibrio datasets
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
+
+# Load datasets
+algi = pd.read_csv('/mnt/data/ranking-search-Anti_vibrio_algi_edit.csv')
+para = pd.read_csv('/mnt/data/ranking-search-Anti_vibrio_para_edit.csv')
+
+# Column names
+aipx_col = "KD_helixvis_bubble_wheel_footer3_plus_decision_plus_AIPx_zscore.txt"
+mic_col = "ACTIVITY"
+
+# Combine datasets
+combined = pd.concat([algi, para], ignore_index=True)
+
+thresholds = [4, 8, 16, 32, 64]
+
+plt.figure(figsize=(6,5))
+
+auc_results = {}
+
+for t in thresholds:
+    labels = (combined[mic_col] <= t).astype(int)
+    scores = combined[aipx_col]
+    
+    fpr, tpr, _ = roc_curve(labels, scores)
+    roc_auc = auc(fpr, tpr)
+    auc_results[t] = roc_auc
+    
+    plt.plot(fpr, tpr, label=f"MIC ≤ {t} µM (AUC={roc_auc:.2f})")
+
+# Diagonal
+plt.plot([0,1],[0,1],'--')
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("Combined Vibrio ROC curves for AIPx")
+plt.legend()
+plt.tight_layout()
+
+output_path = "/mnt/data/combined_vibrio_multithreshold_ROC.png"
+plt.savefig(output_path)
+
+auc_results, output_path
