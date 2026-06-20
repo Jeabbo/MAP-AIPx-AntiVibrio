@@ -17,7 +17,7 @@ Contents:
 The repository is provided to support transparency and reproducibility.
 <img width="8000" height="4500" alt="Figure 1" src="https://github.com/user-attachments/assets/4596ac45-b0b6-4b7b-9411-863d756936c1" />
 
-## Example Application
+## Example plot
 
 BmKn2-7 (independent anti-Vibrio peptide)
 
